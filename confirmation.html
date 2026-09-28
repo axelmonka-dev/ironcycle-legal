@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Adresse confirmée — Ironcycle</title>
+<style>
+  :root { color-scheme: light dark; --accent: #0a84ff; }
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 0; min-height: 100vh;
+         display: grid; place-items: center; padding: 24px; box-sizing: border-box; line-height: 1.5; }
+  main { max-width: 420px; text-align: center; }
+  .icon { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
+          margin: 0 auto 20px; font-size: 36px; background: rgba(52,199,89,.15); color: #34c759; }
+  .icon.error { background: rgba(255,69,58,.15); color: #ff453a; }
+  h1 { font-size: 1.5rem; margin: 0 0 8px; }
+  p { margin: 0 0 24px; opacity: .8; }
+  .button { display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+            font-weight: 600; padding: 12px 28px; border-radius: 12px; }
+  .hint { font-size: .85rem; margin-top: 16px; opacity: .6; }
+</style>
+</head>
+<body>
+<main>
+  <div class="icon" id="icon">✓</div>
+  <h1 id="title">Adresse e-mail confirmée</h1>
+  <p id="text">Ton compte Ironcycle est activé. Retourne dans l'application pour te connecter.</p>
+  <a class="button" href="ironcycle://">Ouvrir Ironcycle</a>
+  <p class="hint">Sur ordinateur ? Tu peux fermer cette page et te connecter depuis ton iPhone.</p>
+</main>
+<script>
+  // Supabase ajoute des paramètres à l'adresse (jetons ou erreur) : on lit l'éventuelle
+  // erreur, puis on nettoie l'URL pour ne pas laisser de jeton visible ou dans l'historique.
+  var params = new URLSearchParams(location.hash.slice(1) + "&" + location.search.slice(1));
+  var error = params.get("error_description") || params.get("error");
+  if (error) {
+    document.getElementById("icon").textContent = "!";
+    document.getElementById("icon").className = "icon error";
+    document.getElementById("title").textContent = "Lien invalide ou expiré";
+    document.getElementById("text").textContent =
+      "Ce lien de confirmation n'est plus valable. Essaie de te connecter dans l'app : " +
+      "si ton compte n'est pas encore activé, inscris-toi à nouveau pour recevoir un nouveau lien.";
+  }
+  if (location.hash || location.search) {
+    history.replaceState(null, "", location.pathname);
+  }
+</script>
+</body>
+</html>
